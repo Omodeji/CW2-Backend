@@ -12,7 +12,10 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.setHeader("Access-Control-Allow-Headers","Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+  );
   next();
 });
 
@@ -31,18 +34,14 @@ app.get("/", (req, res, next) => {
   res.send("Select a collection, e.g., /collection/messages");
 });
 
-app.param("collectionName", (req, res, next, collectionName) => {
-  req.collection = db.collection(collectionName);
-  //console.log('collection name:', req.collection)
-  return next();
-});
-
 // retrieve all the object from an collection
 app.get("/collection/:collectionName", (req, res, next) => {
-  req.collection.find({}).toArray((e, results) => {
-    if (e) return next(e);
-    res.send(results);
-  });
+  db.collection(req.params.collectionName)
+    .find({})
+    .toArray((e, results) => {
+      if (e) return next(e);
+      res.send(results);
+    });
 });
 
 app.post("/search/collection/:collectionName/", (req, res, next) => {
@@ -62,7 +61,7 @@ app.post("/search/collection/:collectionName/", (req, res, next) => {
     search = {};
   }
 
-  req.collection
+  db.collection(req.params.collectionName)
     .find(search)
     .sort({ [sort]: order })
     .toArray((e, results) => {
@@ -73,7 +72,7 @@ app.post("/search/collection/:collectionName/", (req, res, next) => {
 
 //to insert a document to the collection
 app.post("/collection/:collectionName", (req, res, next) => {
-  req.collection.insert(req.body, (e, results) => {
+  db.collection(req.params.collectionName).insert(req.body, (e, results) => {
     if (e) return next(e);
     res.send(results.ops);
   });
@@ -82,15 +81,18 @@ app.post("/collection/:collectionName", (req, res, next) => {
 //to retrieve a particular document by ID
 const ObjectID = require("mongodb").ObjectID;
 app.get("/collection/:collectionName/:id", (req, res, next) => {
-  req.collection.findOne({ _id: new ObjectID(req.params.id) }, (e, result) => {
-    if (e) return next(e);
-    res.send(result);
-  });
+  db.collection(req.params.collectionName).findOne(
+    { _id: new ObjectID(req.params.id) },
+    (e, result) => {
+      if (e) return next(e);
+      res.send(result);
+    }
+  );
 });
 
 //to update a document by ID
 app.put("/collection/:collectionName/:id", (req, res, next) => {
-  req.collection.update(
+  db.collection(req.params.collectionName).update(
     { _id: new ObjectID(req.params.id) },
     { $set: req.body },
     { safe: true, multi: false },
@@ -102,10 +104,13 @@ app.put("/collection/:collectionName/:id", (req, res, next) => {
 });
 
 app.delete("/collection/:collectionName/:id", (req, res, next) => {
-  req.collection.deleteOne({ _id: ObjectID(req.params.id) }, (e, result) => {
-    if (e) return next(e);
-    res.send(result.result.n === 1 ? { msg: "success" } : { msg: "error" });
-  });
+  db.collection(req.params.collectionName).deleteOne(
+    { _id: ObjectID(req.params.id) },
+    (e, result) => {
+      if (e) return next(e);
+      res.send(result.result.n === 1 ? { msg: "success" } : { msg: "error" });
+    }
+  );
 });
 
 app.listen(3000, () => {
