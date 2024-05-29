@@ -35,8 +35,24 @@ app.param('collectionName', (req, res, next, collectionName) => {
 })
 
 // retrieve all the object from an collection
-app.get('/collection/:collectionName', (req, res, next) => {
-    req.collection.find({}).toArray((e, results) => {
+app.post('/collection/:collectionName', (req, res, next) => {
+    var search = req.body.search;
+    var sort = req.body.sort || "title";
+    var order = req.body.order == "desc" ? -1 : 1;
+
+    if (search) {
+        search = {
+            $or: [
+                { "title": { $regex: search, $options: "i" } },
+                { "subject": { $regex: search, $options: "i" } },
+                { "location": { $regex: search, $options: "i" } }
+            ]
+        };
+    } else {
+        search = {};
+    }
+
+    req.collection.find(search).sort({ [sort]: order }).toArray((e, results) => {
         if (e) return next(e)
         res.send(results)
     }
