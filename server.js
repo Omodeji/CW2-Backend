@@ -26,8 +26,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (req, res, next) => {
-//   db.collection('lessons').updateMany({}, { $set: { spaces: 5 } });
+app.get("/", (req, res) => {
+  // db.collection('lessons').updateMany({}, { $set: { avaliability: 5 } });
   res.send("Select a collection, e.g., /collection/lessons");
 });
 
@@ -40,7 +40,9 @@ app.get("/collection/:collectionName", (req, res) => {
       .then((results) => {
         res.send(results);
       });
-  } catch {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Search
@@ -69,7 +71,9 @@ app.post("/search/collection/lessons/", (req, res) => {
       .then((results) => {
         res.send(results);
       });
-  } catch {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //to insert a document to the collection
@@ -80,7 +84,9 @@ app.post("/collection/:collectionName", (req, res) => {
       .then((results) => {
         res.send(results);
       });
-  } catch {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.get("/collection/:collectionName/:id", (req, res) => {
@@ -90,7 +96,9 @@ app.get("/collection/:collectionName/:id", (req, res) => {
       .then((results) => {
         res.send(results);
       });
-  } catch {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //to update a document by ID
@@ -101,7 +109,9 @@ app.put("/collection/:collectionName/:id", (req, res) => {
       .then((results) => {
         res.send(results);
       });
-  } catch {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.delete("/collection/:collectionName/:id", (req, res) => {
@@ -111,7 +121,9 @@ app.delete("/collection/:collectionName/:id", (req, res) => {
       .then((results) => {
         res.send(results);
       });
-  } catch {}
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(3000, () => {
