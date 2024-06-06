@@ -53,7 +53,9 @@ app.get("/search/collection/lessons/", (req, res) => {
     var search = req.query.search;
     var sort = req.query.sort || "title";
     var order = req.query.order == "desc" ? -1 : 1;
-    console.log('New Search: ', search)
+    if (search) {
+      console.log('New Search: ', search)
+    }
     if (search) {
       search = {
         $or: [
