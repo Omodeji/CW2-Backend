@@ -26,8 +26,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   // db.collection('lessons').updateMany({}, { $set: { avaliability: 5 } });
+//   var test = await db.collection("lessons").find({}).toArray()
+//   console.log(test)
   res.send("Select a collection, e.g., /collection/lessons");
 });
 
@@ -46,11 +48,11 @@ app.get("/collection/:collectionName", (req, res) => {
 });
 
 // Search
-app.post("/search/collection/lessons/", (req, res) => {
+app.get("/search/collection/lessons/", (req, res) => {
   try {
-    var search = req.body.search;
-    var sort = req.body.sort || "title";
-    var order = req.body.order == "desc" ? -1 : 1;
+    var search = req.query.search;
+    var sort = req.query.sort || "title";
+    var order = req.query.order == "desc" ? -1 : 1;
 
     if (search) {
       search = {
