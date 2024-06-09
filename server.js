@@ -10,7 +10,9 @@ app.use(cors());
 
 // Connecting to the database
 var db;
+// the connection string for connecting to a MongoDB database.
 const uri = "mongodb+srv://Deji:Ayodeji005@cluster0.lnn7tna.mongodb.net/";
+// try and catch creates a connection to the MongoDB database and handle any potential errors.
 try {
   const client = new MongoClient(uri);
   db = client.db("webstore");
@@ -28,8 +30,8 @@ app.use((req, res, next) => {
 
 app.get("/", async (req, res) => {
   // db.collection('lessons').updateMany({}, { $set: { avaliability: 5 } });
-//   var test = await db.collection("lessons").find({}).toArray()
-//   console.log(test)
+  var test = await db.collection("lessons").find({}).toArray()
+  console.log(test)
   res.send("Select a collection, e.g., /collection/lessons");
 });
 
@@ -73,7 +75,7 @@ app.get("/search/collection/lessons/", (req, res) => {
       .sort({ [sort]: order })
       .toArray()
       .then((results) => {
-        res.send(results);
+        res.send(results); //sends the resulting array of documents as the response to the client.
       });
   } catch (error) {
     console.log(error);
